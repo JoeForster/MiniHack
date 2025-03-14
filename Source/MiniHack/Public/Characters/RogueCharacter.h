@@ -8,6 +8,7 @@
 
 class USpringArmComponent;
 class UCameraComponent;
+class AItem;
 
 UCLASS()
 class MINIHACK_API ARogueCharacter : public ACharacter
@@ -21,6 +22,8 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
+
 protected:
 	virtual void BeginPlay() override;
 
@@ -28,6 +31,7 @@ protected:
 	void MoveRight(float Value);
 	void Turn(float Value);
 	void LookUp(float Value);
+	void UsePressed();
 
 private:
 	UPROPERTY(VisibleAnywhere)
@@ -36,4 +40,6 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	UCameraComponent* ViewCamera;
 
+	UPROPERTY(VisibleInstanceOnly)
+	AItem* OverlappingItem;
 };

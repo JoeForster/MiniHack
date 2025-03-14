@@ -2,6 +2,7 @@
 #include "MiniHack/DebugMacros.h"
 
 #include "Components/SphereComponent.h"
+#include "Characters/RogueCharacter.h"
 
 AItem::AItem()
 {
@@ -47,6 +48,13 @@ void AItem::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 		const FString OtherActorName = OtherActor->GetName();
 		GEngine->AddOnScreenDebugMessage(1, 30.f, FColor::Green, OtherActorName);
 	}
+
+	ARogueCharacter* OtherCharacter = Cast<ARogueCharacter>(OtherActor);
+	if (OtherCharacter != nullptr)
+	{
+		// TODO deal with multiple overlaps
+		OtherCharacter->SetOverlappingItem(this);
+	}
 }
 
 void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
@@ -55,5 +63,12 @@ void AItem::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor*
 	{
 		const FString OtherActorName = OtherActor->GetName();
 		GEngine->AddOnScreenDebugMessage(1, 30.f, FColor::Red, OtherActorName);
+	}
+
+	ARogueCharacter* OtherCharacter = Cast<ARogueCharacter>(OtherActor);
+	if (OtherCharacter != nullptr)
+	{
+		// TODO deal with multiple overlaps
+		OtherCharacter->SetOverlappingItem(nullptr);
 	}
 }
