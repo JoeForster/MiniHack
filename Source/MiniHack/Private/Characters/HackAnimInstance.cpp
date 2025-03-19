@@ -26,6 +26,7 @@ void UHackAnimInstance::NativeUpdateAnimation(float DeltaTime)
 	{
 		// Assumes no timed hold-jump or anything like that
 		JustJumped = RogueCharacter->bPressedJump;
+		CharacterState = RogueCharacter->GetCharacterState();
 	}
 
 	if (RogueCharacterMovement)

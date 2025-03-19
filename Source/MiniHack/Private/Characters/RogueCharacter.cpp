@@ -70,10 +70,11 @@ void ARogueCharacter::LookUp(float Value)
 
 void ARogueCharacter::UsePressed()
 {
-	AWeapon* Weapon = Cast<AWeapon>(OverlappingItem);
-	if (Weapon)
+	AWeapon* OverlappingWeapon = Cast<AWeapon>(OverlappingItem);
+	if (OverlappingWeapon)
 	{
-		Weapon->Equip(GetMesh(), FName("handslot_r"));
+		OverlappingWeapon->Equip(GetMesh(), FName("handslot_r"));
+		CharacterState = ECharacterState::ECS_EquippedTwoHandedWeapon;
 	}
 }
 
