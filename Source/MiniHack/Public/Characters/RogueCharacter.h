@@ -10,7 +10,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class AItem;
-
+class UAnimMontage;
 
 UCLASS()
 class MINIHACK_API ARogueCharacter : public ACharacter
@@ -35,6 +35,7 @@ protected:
 	void Turn(float Value);
 	void LookUp(float Value);
 	void UsePressed();
+	void AttackPressed();
 
 private:
 
@@ -48,4 +49,7 @@ private:
 
 	UPROPERTY(VisibleInstanceOnly)
 	AItem* OverlappingItem;
+
+	UPROPERTY(EditDefaultsOnly, Category = Montages)
+	UAnimMontage* AttackMontage;
 };

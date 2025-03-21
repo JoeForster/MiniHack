@@ -5,6 +5,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Items/Item.h"
 #include "Items/Weapons/Weapon.h"
+#include "Animation/AnimMontage.h"
 
 ARogueCharacter::ARogueCharacter()
 {
@@ -78,6 +79,31 @@ void ARogueCharacter::UsePressed()
 	}
 }
 
+
+void ARogueCharacter::AttackPressed()
+{
+	if (USkeletalMeshComponent* CharacterMesh = GetMesh())
+	{
+		UAnimInstance* AnimInstance = CharacterMesh->GetAnimInstance();
+		if (AnimInstance && AttackMontage)
+		{
+			AnimInstance->Montage_Play(AttackMontage);
+			int32 Selection = FMath::RandRange(0, 1);
+			FName SectionName = FName();
+			switch (Selection)
+			{
+			case 0:
+				SectionName = FName("Attack1");
+				break;
+			case 1:
+				SectionName = FName("Attack2");
+				break;
+			}
+			AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
+		}
+	}
+}
+
 void ARogueCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -95,5 +121,6 @@ void ARogueCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 	PlayerInputComponent->BindAction(FName("Jump"), IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction(FName("Use"), IE_Pressed, this, &ARogueCharacter::UsePressed);
+	PlayerInputComponent->BindAction(FName("Attack"), IE_Pressed, this, &ARogueCharacter::AttackPressed);
 }
 
