@@ -6,6 +6,12 @@
 
 class USphereComponent;
 
+enum class EItemState : uint8
+{
+	EIS_Hovering,
+	EIS_Equipped
+};
+
 UCLASS()
 class MINIHACK_API AItem : public AActor
 {
@@ -43,12 +49,15 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 	UStaticMeshComponent* ItemMesh;
 
+	EItemState ItemState = EItemState::EIS_Hovering;
+
 private:	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sine Parameters", meta = (AllowPrivateAccess = "true"))
 	float TimeConstant = 5.f;
 
 	UPROPERTY(VisibleAnywhere);
 	USphereComponent* SphereCppTest;
+
 };
 
 template<typename T>

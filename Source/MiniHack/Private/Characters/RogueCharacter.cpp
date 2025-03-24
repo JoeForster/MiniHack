@@ -35,6 +35,10 @@ void ARogueCharacter::BeginPlay()
 
 void ARogueCharacter::MoveForward(float Value)
 {
+	if (ActionState == EActionState::EAS_Attacking)
+	{
+		return;
+	}
 	if (Controller != nullptr && Value != 0.f)
 	{
 		// Get the forward movement vector based on controller's rotation
@@ -48,6 +52,10 @@ void ARogueCharacter::MoveForward(float Value)
 
 void ARogueCharacter::MoveRight(float Value)
 {
+	if (ActionState == EActionState::EAS_Attacking)
+	{
+		return;
+	}
 	if (Controller != nullptr && Value != 0.f)
 	{
 		// Get the right movement vector based on controller's rotation
@@ -82,13 +90,22 @@ void ARogueCharacter::UsePressed()
 
 void ARogueCharacter::AttackPressed()
 {
+	if (CanAttack())
+	{
+		PlayAttackMontage();
+		ActionState = EActionState::EAS_Attacking;
+	}
+}
+
+void ARogueCharacter::PlayAttackMontage()
+{
 	if (USkeletalMeshComponent* CharacterMesh = GetMesh())
 	{
 		UAnimInstance* AnimInstance = CharacterMesh->GetAnimInstance();
 		if (AnimInstance && AttackMontage)
 		{
 			AnimInstance->Montage_Play(AttackMontage);
-			int32 Selection = FMath::RandRange(0, 1);
+			const int32 Selection = FMath::RandRange(0, 1);
 			FName SectionName = FName();
 			switch (Selection)
 			{
@@ -102,6 +119,18 @@ void ARogueCharacter::AttackPressed()
 			AnimInstance->Montage_JumpToSection(SectionName, AttackMontage);
 		}
 	}
+}
+
+void ARogueCharacter::AttackEnd()
+{
+	ActionState = EActionState::EAS_Unoccupied;
+}
+
+bool ARogueCharacter::CanAttack()
+{
+	return (
+		ActionState == EActionState::EAS_Unoccupied &&
+		CharacterState != ECharacterState::ECS_Unequipped);
 }
 
 void ARogueCharacter::Tick(float DeltaTime)
