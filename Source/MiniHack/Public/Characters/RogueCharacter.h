@@ -10,6 +10,7 @@
 class USpringArmComponent;
 class UCameraComponent;
 class AItem;
+class AWeapon;
 class UAnimMontage;
 
 UCLASS()
@@ -30,7 +31,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	// Input callbakcs
+	// Input callbacks
 	void MoveForward(float Value);
 	void MoveRight(float Value);
 	void Turn(float Value);
@@ -63,4 +64,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 	UAnimMontage* AttackMontage;
+
+	UPROPERTY(VisibleAnywhere, Category = Weapon)
+	AWeapon* CarriedWeapon;
 };

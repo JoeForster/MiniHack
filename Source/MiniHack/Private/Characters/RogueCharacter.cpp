@@ -84,6 +84,27 @@ void ARogueCharacter::UsePressed()
 	{
 		OverlappingWeapon->Equip(GetMesh(), FName("handslot_r"));
 		CharacterState = ECharacterState::ECS_EquippedTwoHandedWeapon;
+		OverlappingItem = nullptr; // TODO proper pickup logic (see also OnSphereBeginOverlap)
+		CarriedWeapon = OverlappingWeapon; 
+
+	}
+	else
+	{
+		const bool CanUnequip = (ActionState == EActionState::EAS_Unoccupied && CharacterState != ECharacterState::ECS_Unequipped);
+		const bool CanEquip = (
+			ActionState == EActionState::EAS_Unoccupied &&
+			CharacterState == ECharacterState::ECS_Unequipped &&
+			CarriedWeapon != nullptr);
+		if (CanUnequip)
+		{
+			CharacterState = ECharacterState::ECS_Unequipped;
+			CarriedWeapon->AttachMeshToSocket(GetMesh(), FName("SpineSocket"));
+		}
+		if (CanEquip)
+		{
+			CharacterState = ECharacterState::ECS_EquippedTwoHandedWeapon;
+			CarriedWeapon->Equip(GetMesh(), FName("handslot_r"));
+		}
 	}
 }
 

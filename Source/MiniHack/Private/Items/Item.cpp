@@ -58,7 +58,7 @@ void AItem::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	ARogueCharacter* OtherCharacter = Cast<ARogueCharacter>(OtherActor);
 	if (OtherCharacter != nullptr)
 	{
-		// TODO deal with multiple overlaps
+		// TODO deal with multiple overlaps 
 		OtherCharacter->SetOverlappingItem(this);
 	}
 }
