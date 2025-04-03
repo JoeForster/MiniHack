@@ -6,6 +6,7 @@
 #include "Items/Item.h"
 #include "Items/Weapons/Weapon.h"
 #include "Animation/AnimMontage.h"
+#include "Components/BoxComponent.h"
 
 ARogueCharacter::ARogueCharacter()
 {
@@ -25,6 +26,18 @@ ARogueCharacter::ARogueCharacter()
 	ViewCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("ViewCamera"));
 	ViewCamera->SetupAttachment(CameraBoom);
 
+}
+
+void ARogueCharacter::SetWeaponCollisionEnabled(ECollisionEnabled::Type EnabledType)
+{
+	if (CarriedWeapon)
+	{
+		UBoxComponent* HurtBox = CarriedWeapon->GetHurtBox();
+		if (HurtBox)
+		{
+			HurtBox->SetCollisionEnabled(EnabledType);
+		}
+	}
 }
 
 void ARogueCharacter::BeginPlay()
@@ -173,4 +186,3 @@ void ARogueCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	PlayerInputComponent->BindAction(FName("Use"), IE_Pressed, this, &ARogueCharacter::UsePressed);
 	PlayerInputComponent->BindAction(FName("Attack"), IE_Pressed, this, &ARogueCharacter::AttackPressed);
 }
-

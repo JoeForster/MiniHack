@@ -50,13 +50,14 @@ protected:
 	UStaticMeshComponent* ItemMesh;
 
 	EItemState ItemState = EItemState::EIS_Hovering;
+	
+	// TODO rename
+	UPROPERTY(VisibleAnywhere);
+	USphereComponent* SphereCppTest;
 
 private:	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sine Parameters", meta = (AllowPrivateAccess = "true"))
 	float TimeConstant = 5.f;
-
-	UPROPERTY(VisibleAnywhere);
-	USphereComponent* SphereCppTest;
 
 };
 
