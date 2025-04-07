@@ -7,12 +7,12 @@ AEnemy::AEnemy()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
-	if (USkeletalMeshComponent* Mesh = GetMesh())
+	if (USkeletalMeshComponent* MyMesh = GetMesh())
 	{
-		Mesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
-		Mesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
-		Mesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
-		Mesh->SetGenerateOverlapEvents(true);
+		MyMesh->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+		MyMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Visibility, ECollisionResponse::ECR_Block);
+		MyMesh->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
+		MyMesh->SetGenerateOverlapEvents(true);
 	}
 
 	if (UCapsuleComponent* Capsule = GetCapsuleComponent())
