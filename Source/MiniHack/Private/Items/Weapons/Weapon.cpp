@@ -7,6 +7,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "Components/SphereComponent.h"
 #include "Components/BoxComponent.h"
+#include "Interfaces/HitReceiver.h"
 
 AWeapon::AWeapon()
 {
@@ -43,8 +44,13 @@ void AWeapon::Equip(USceneComponent* InParent, FName InSocketName)
 	}
 	if (HurtBox)
 	{
-		SphereCppTest->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		HurtBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
+}
+
+void AWeapon::ClearIgnoreActors()
+{
+	IgnoreActors.Empty();
 }
 
 void AWeapon::BeginPlay()
@@ -76,7 +82,6 @@ void AWeapon::OnHurtBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 	const FVector HalfSize (5.f, 5.f, 5.f);
 	const bool bTraceComplex = false;
 	const bool bIgnoreSelf = true;
-	const TArray<AActor*> ActorsToIgnore;
 
 	UKismetSystemLibrary::BoxTraceSingle(
 		this,
@@ -86,8 +91,15 @@ void AWeapon::OnHurtBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 		HurtBoxTraceStart->GetComponentRotation(),
 		ETraceTypeQuery::TraceTypeQuery1,
 		bTraceComplex,
-		ActorsToIgnore,
+		IgnoreActors,
 		EDrawDebugTrace::Type::ForDuration,
 		HitResult,
 		bIgnoreSelf);
+
+	if (IHitReceiver* HitReceiver = Cast<IHitReceiver>(HitResult.GetActor()))
+	{
+		HitReceiver->ReceiveHit(HitResult.ImpactPoint);
+		// Stop hitting already-hit actors until the swing finishes
+		IgnoreActors.AddUnique(HitResult.GetActor());
+	}
 }

@@ -2,6 +2,8 @@
 
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "MiniHack/DebugMacros.h"
+#include "Animation/AnimMontage.h"
 
 AEnemy::AEnemy()
 {
@@ -27,6 +29,30 @@ void AEnemy::BeginPlay()
 	
 }
 
+void AEnemy::PlayHitReactMontage()
+{
+	if (USkeletalMeshComponent* CharacterMesh = GetMesh())
+	{
+		UAnimInstance* AnimInstance = CharacterMesh->GetAnimInstance();
+		if (AnimInstance && HitReactMontage)
+		{
+			AnimInstance->Montage_Play(HitReactMontage);
+			const int32 Selection = FMath::RandRange(0, 1);
+			FName SectionName = FName();
+			switch (Selection)
+			{
+			case 0:
+				SectionName = FName("Hit1");
+				break;
+			case 1:
+				SectionName = FName("Hit2");
+				break;
+			}
+			AnimInstance->Montage_JumpToSection(SectionName, HitReactMontage);
+		}
+	}
+}
+
 void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -37,5 +63,16 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
+}
+
+void AEnemy::ReceiveHit(const FVector& ImpactPoint)
+{
+	//DRAW_SPHERE(ImpactPoint);
+	auto* world = GetWorld();
+	if (world)
+	{
+		DrawDebugSphere(GetWorld(), ImpactPoint, 5.f, 10, FColor::Emerald, true);
+	}
+	PlayHitReactMontage();
 }
 

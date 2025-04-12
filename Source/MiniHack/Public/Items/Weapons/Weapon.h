@@ -22,7 +22,8 @@ public:
 
     void AttachMeshToSocket(USceneComponent* InParent, const FName& InSocketName);
     void Equip(USceneComponent* InParent, FName InSocketName);
-	
+	void ClearIgnoreActors();
+
 	FORCEINLINE UBoxComponent* GetHurtBox() const { return HurtBox; }
 
 protected:
@@ -47,4 +48,6 @@ private:
 	
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* HurtBoxTraceEnd;
+
+	TArray<AActor*> IgnoreActors;
 };

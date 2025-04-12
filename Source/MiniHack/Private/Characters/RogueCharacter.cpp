@@ -37,6 +37,7 @@ void ARogueCharacter::SetWeaponCollisionEnabled(ECollisionEnabled::Type EnabledT
 		{
 			HurtBox->SetCollisionEnabled(EnabledType);
 		}
+		CarriedWeapon->ClearIgnoreActors();
 	}
 }
 

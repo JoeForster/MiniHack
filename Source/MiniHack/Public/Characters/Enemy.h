@@ -4,10 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "Interfaces/HitReceiver.h"
 #include "Enemy.generated.h"
 
+class UAnimMontage;
+
 UCLASS()
-class MINIHACK_API AEnemy : public ACharacter
+class MINIHACK_API AEnemy : public ACharacter, public IHitReceiver
 {
 	GENERATED_BODY()
 
@@ -18,6 +21,15 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	virtual void ReceiveHit(const FVector& ImpactPoint) override;
+
 protected:
 	virtual void BeginPlay() override;
+	
+	// Montage play functions
+	void PlayHitReactMontage();
+
+private:
+	UPROPERTY(EditDefaultsOnly, Category = Montages)
+	UAnimMontage* HitReactMontage;
 };
