@@ -92,7 +92,7 @@ void AWeapon::OnHurtBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 		ETraceTypeQuery::TraceTypeQuery1,
 		bTraceComplex,
 		IgnoreActors,
-		EDrawDebugTrace::Type::ForDuration,
+		EDrawDebugTrace::Type::None,
 		HitResult,
 		bIgnoreSelf);
 

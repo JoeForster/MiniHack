@@ -4,6 +4,7 @@
 #include "Components/CapsuleComponent.h"
 #include "MiniHack/DebugMacros.h"
 #include "Animation/AnimMontage.h"
+#include "Kismet/GameplayStatics.h"
 
 AEnemy::AEnemy()
 {
@@ -68,11 +69,21 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 void AEnemy::ReceiveHit(const FVector& ImpactPoint)
 {
 	//DRAW_SPHERE(ImpactPoint);
-	auto* world = GetWorld();
-	if (world)
-	{
-		DrawDebugSphere(GetWorld(), ImpactPoint, 5.f, 10, FColor::Emerald, true);
-	}
+	//auto* world = GetWorld();
+	//if (world)
+	//{
+	//	DrawDebugSphere(GetWorld(), ImpactPoint, 5.f, 10, FColor::Emerald, true);
+	//}
 	PlayHitReactMontage();
+
+	if (HitSound)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, HitSound, ImpactPoint);
+	}
+
+	if (HitParticles)
+	{
+		UGameplayStatics::SpawnEmitterAtLocation(this, HitParticles, ImpactPoint);
+	}
 }
 
