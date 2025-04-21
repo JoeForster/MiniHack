@@ -98,8 +98,11 @@ void AWeapon::OnHurtBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 
 	if (IHitReceiver* HitReceiver = Cast<IHitReceiver>(HitResult.GetActor()))
 	{
-		HitReceiver->ReceiveHit(HitResult.ImpactPoint);
-		// Stop hitting already-hit actors until the swing finishes
-		IgnoreActors.AddUnique(HitResult.GetActor());
+		HitReceiver->Execute_ReceiveHit(HitResult.GetActor(), HitResult.ImpactPoint);
+		
 	}
+	// Stop hitting already-hit actors until the swing finishes
+	IgnoreActors.AddUnique(HitResult.GetActor());
+	// Apply fields even if the hit entity didn't implement the interface
+	CreateFields(HitResult.ImpactPoint);
 }

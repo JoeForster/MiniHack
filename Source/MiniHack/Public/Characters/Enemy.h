@@ -21,7 +21,7 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	virtual void ReceiveHit(const FVector& ImpactPoint) override;
+	virtual void ReceiveHit_Implementation(const FVector& ImpactPoint) override;
 
 protected:
 	virtual void BeginPlay() override;

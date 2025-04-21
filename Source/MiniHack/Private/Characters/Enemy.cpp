@@ -66,7 +66,7 @@ void AEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 
 }
 
-void AEnemy::ReceiveHit(const FVector& ImpactPoint)
+void AEnemy::ReceiveHit_Implementation(const FVector& ImpactPoint)
 {
 	//DRAW_SPHERE(ImpactPoint);
 	//auto* world = GetWorld();

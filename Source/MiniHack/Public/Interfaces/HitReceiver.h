@@ -22,5 +22,6 @@ class MINIHACK_API IHitReceiver
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-	virtual void ReceiveHit(const FVector& ImpactPoint) = 0;
+	UFUNCTION(BlueprintNativeEvent)
+	void ReceiveHit(const FVector& ImpactPoint);
 };
