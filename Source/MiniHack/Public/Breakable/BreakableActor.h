@@ -7,7 +7,9 @@
 #include "Interfaces/HitReceiver.h"
 #include "BreakableActor.generated.h"
 
+class ATreasure;
 class UGeometryCollectionComponent;
+class UCapsuleComponent;
 
 UCLASS()
 class MINIHACK_API ABreakableActor : public AActor, public IHitReceiver
@@ -22,9 +24,19 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UCapsuleComponent* Capsule;
+
 
 private:
 	UPROPERTY(VisibleAnywhere)
 	UGeometryCollectionComponent* GeometryCollection;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<ATreasure> DroppedOnDestroyed;
+
+	// HACK until I fix infinite loop issue due to treasure colliding with owner
+	bool HasSpawnedTreasure = false;
 
 };
