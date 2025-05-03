@@ -8,6 +8,7 @@
 #include "Components/SphereComponent.h"
 #include "Components/BoxComponent.h"
 #include "Interfaces/HitReceiver.h"
+#include "NiagaraComponent.h"
 
 AWeapon::AWeapon()
 {
@@ -38,13 +39,17 @@ void AWeapon::Equip(USceneComponent* InParent, FName InSocketName)
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, EquipSound, GetActorLocation());
 	}
-	if (SphereCppTest)
+	if (InteractSphere)
 	{
-		SphereCppTest->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		InteractSphere->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	}
 	if (HurtBox)
 	{
 		HurtBox->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+	if (SparkleEffect)
+	{
+		SparkleEffect->Deactivate();
 	}
 }
 

@@ -19,8 +19,9 @@ class MINIHACK_API ABreakableActor : public AActor, public IHitReceiver
 public:	
 	ABreakableActor();
 	virtual void Tick(float DeltaTime) override;
-	
-	virtual void ReceiveHit_Implementation(const FVector& ImpactPoint) override;
+
+	UFUNCTION(BlueprintCallable)
+	void OnDestroyed();
 
 protected:
 	virtual void BeginPlay() override;
@@ -34,9 +35,8 @@ private:
 	UGeometryCollectionComponent* GeometryCollection;
 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<ATreasure> DroppedOnDestroyed;
+	TArray<TSubclassOf<ATreasure>> TreasureClasses;
 
-	// HACK until I fix infinite loop issue due to treasure colliding with owner
-	bool HasSpawnedTreasure = false;
+	bool IsBroken = false;
 
 };

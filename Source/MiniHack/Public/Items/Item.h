@@ -5,6 +5,7 @@
 #include "Item.generated.h"
 
 class USphereComponent;
+class UNiagaraComponent;
 
 enum class EItemState : uint8
 {
@@ -25,7 +26,7 @@ protected:
 	virtual void BeginPlay() override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sine Parameters")
-	float Amplitude = 5.f;
+	float Amplitude = 1.f;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Sine Parameters")
 	float RunningTime = 0.f;
@@ -50,10 +51,12 @@ protected:
 	UStaticMeshComponent* ItemMesh;
 
 	EItemState ItemState = EItemState::EIS_Hovering;
-	
-	// TODO rename
+
 	UPROPERTY(VisibleAnywhere);
-	USphereComponent* SphereCppTest;
+	USphereComponent* InteractSphere;
+	
+	UPROPERTY(EditAnywhere);
+	UNiagaraComponent* SparkleEffect;
 
 private:	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Sine Parameters", meta = (AllowPrivateAccess = "true"))

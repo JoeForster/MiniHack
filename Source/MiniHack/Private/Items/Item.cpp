@@ -3,6 +3,7 @@
 
 #include "Components/SphereComponent.h"
 #include "Characters/RogueCharacter.h"
+#include "NiagaraComponent.h"
 
 AItem::AItem()
 {
@@ -11,8 +12,12 @@ AItem::AItem()
 	ItemMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("ItemMeshComponent"));
 	RootComponent = ItemMesh;
 
-	SphereCppTest = CreateDefaultSubobject<USphereComponent>(TEXT("SphereCppTest"));
-	SphereCppTest->SetupAttachment(GetRootComponent());
+	InteractSphere = CreateDefaultSubobject<USphereComponent>(TEXT("InteractSphere"));
+	InteractSphere->SetupAttachment(GetRootComponent());
+
+	SparkleEffect = CreateDefaultSubobject<UNiagaraComponent>(TEXT("SparkleEffect"));
+	SparkleEffect->SetupAttachment(GetRootComponent());
+
 }
 
 void AItem::Tick(float DeltaTime)
@@ -32,8 +37,14 @@ void AItem::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SphereCppTest->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnSphereBeginOverlap);
-	SphereCppTest->OnComponentEndOverlap.AddDynamic(this, &AItem::OnSphereEndOverlap);
+	//SphereCppTest->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnSphereBeginOverlap);
+	//SphereCppTest->OnComponentEndOverlap.AddDynamic(this, &AItem::OnSphereEndOverlap);
+
+	if (InteractSphere)
+	{
+		InteractSphere->OnComponentBeginOverlap.AddDynamic(this, &AItem::OnSphereBeginOverlap);
+		InteractSphere->OnComponentEndOverlap.AddDynamic(this, &AItem::OnSphereEndOverlap);
+	}
 }
 
 float AItem::TransformedSin()

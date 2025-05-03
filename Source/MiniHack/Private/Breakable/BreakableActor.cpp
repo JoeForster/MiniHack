@@ -14,7 +14,7 @@ ABreakableActor::ABreakableActor()
 	GeometryCollection->SetGenerateOverlapEvents(true);
 	GeometryCollection->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	GeometryCollection->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Ignore);
-	
+
 	Capsule = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule"));
 	Capsule->SetupAttachment(GetRootComponent());
 	Capsule->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
@@ -33,19 +33,30 @@ void ABreakableActor::Tick(float DeltaTime)
 
 }
 
-void ABreakableActor::ReceiveHit_Implementation(const FVector& ImpactPoint)
+//void ABreakableActor::ReceiveHit_Implementation(const FVector& ImpactPoint)
+//{
+//	void ABreakableActor::ReceiveHit_Implementation(const FVector& ImpactPoint)
+//}
+
+void ABreakableActor::OnDestroyed()
 {
+	// TODO double-check this guard is still needed (was for when we were taking ReceiveHit)
+	if (IsBroken)
+	{
+		return;
+	}
+	IsBroken = true;
+
 	// TODO should be on destroyed not on every hit.
 	// (use OnChaosBreakEvent or is there a better damage callback?)
-	if (!HasSpawnedTreasure && DroppedOnDestroyed)
+	if (!TreasureClasses.IsEmpty())
 	{
 		if (UWorld* World = GetWorld())
 		{
 			FVector SpawnLocation = GetActorLocation();
 			SpawnLocation.Z += 75.f;
-			World->SpawnActor<ATreasure>(DroppedOnDestroyed, SpawnLocation, GetActorRotation());
-
-			HasSpawnedTreasure = true;
+			const int32 Selection = FMath::RandRange(0, TreasureClasses.Num() - 1);
+			World->SpawnActor<ATreasure>(TreasureClasses[Selection], SpawnLocation, GetActorRotation());
 		}
 	}
 }
