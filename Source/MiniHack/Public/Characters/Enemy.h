@@ -7,6 +7,8 @@
 #include "Interfaces/HitReceiver.h"
 #include "Enemy.generated.h"
 
+class UAttributeComponent;
+class UHealthBarComponent;
 class UAnimMontage;
 
 UCLASS()
@@ -23,6 +25,8 @@ public:
 
 	virtual void ReceiveHit_Implementation(const FVector& ImpactPoint) override;
 
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+
 protected:
 	virtual void BeginPlay() override;
 	
@@ -30,6 +34,13 @@ protected:
 	void PlayHitReactMontage();
 
 private:
+
+	UPROPERTY(VisibleAnywhere)
+	UAttributeComponent* Attributes;
+
+	UPROPERTY(VisibleAnywhere)
+	UHealthBarComponent* HealthBarWidget;
+
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 	UAnimMontage* HitReactMontage;
 

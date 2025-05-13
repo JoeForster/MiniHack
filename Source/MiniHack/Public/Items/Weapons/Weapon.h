@@ -21,7 +21,7 @@ public:
 	AWeapon();
 
     void AttachMeshToSocket(USceneComponent* InParent, const FName& InSocketName);
-    void Equip(USceneComponent* InParent, FName InSocketName);
+    void Equip(USceneComponent* InParent, FName InSocketName, AActor* NewOwner, APawn* NewInstigator);
 	void ClearIgnoreActors();
 
 	FORCEINLINE UBoxComponent* GetHurtBox() const { return HurtBox; }
@@ -53,4 +53,7 @@ private:
 	USceneComponent* HurtBoxTraceEnd;
 
 	TArray<AActor*> IgnoreActors;
+
+	UPROPERTY(EditAnywhere, Category = "Weapon Logic")
+	float Damage = 20.f;
 };

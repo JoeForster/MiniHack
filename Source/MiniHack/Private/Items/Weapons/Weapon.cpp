@@ -31,9 +31,12 @@ void AWeapon::AttachMeshToSocket(USceneComponent* InParent, const FName& InSocke
 	ItemMesh->AttachToComponent(InParent, TransformRules, InSocketName);
 }
 
-void AWeapon::Equip(USceneComponent* InParent, FName InSocketName)
-{
+void AWeapon::Equip(USceneComponent* InParent, FName InSocketName, AActor* NewOwner, APawn* NewInstigator)
+{	
+	SetOwner(NewOwner);
+	SetInstigator(NewInstigator);
 	AttachMeshToSocket(InParent, InSocketName);
+
 	ItemState = EItemState::EIS_Carried;
 	if (EquipSound)
 	{
@@ -101,13 +104,25 @@ void AWeapon::OnHurtBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 		HitResult,
 		bIgnoreSelf);
 
-	if (IHitReceiver* HitReceiver = Cast<IHitReceiver>(HitResult.GetActor()))
+	if (AActor* HitActor = HitResult.GetActor())
 	{
-		HitReceiver->Execute_ReceiveHit(HitResult.GetActor(), HitResult.ImpactPoint);
+		if (IHitReceiver* HitReceiver = Cast<IHitReceiver>(HitActor))
+		{
+			HitReceiver->Execute_ReceiveHit(HitActor, HitResult.ImpactPoint);
+		}
 		
+		// Stop hitting already-hit actors until the swing finishes
+		IgnoreActors.AddUnique(HitActor);
+		// Apply fields even if the hit entity didn't implement the interface
+		CreateFields(HitResult.ImpactPoint);
+	
+		AController* InstigatorController = GetInstigator() ? GetInstigator()->GetController() : nullptr;
+
+		UGameplayStatics::ApplyDamage(
+			HitActor,
+			Damage,
+			InstigatorController,
+			this,
+			UDamageType::StaticClass());
 	}
-	// Stop hitting already-hit actors until the swing finishes
-	IgnoreActors.AddUnique(HitResult.GetActor());
-	// Apply fields even if the hit entity didn't implement the interface
-	CreateFields(HitResult.ImpactPoint);
 }

@@ -1,10 +1,12 @@
 #include "Characters/Enemy.h"
 
-#include "Components/SkeletalMeshComponent.h"
-#include "Components/CapsuleComponent.h"
-#include "MiniHack/DebugMacros.h"
 #include "Animation/AnimMontage.h"
+#include "Components/AttributeComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Components/SkeletalMeshComponent.h"
+#include "HUD/HealthBarComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "MiniHack/DebugMacros.h"
 
 AEnemy::AEnemy()
 {
@@ -22,12 +24,20 @@ AEnemy::AEnemy()
 	{
 		Capsule->SetCollisionResponseToChannel(ECollisionChannel::ECC_Camera, ECollisionResponse::ECR_Ignore);
 	}
+
+	Attributes = CreateDefaultSubobject<UAttributeComponent>(TEXT("Attributes"));
+	HealthBarWidget = CreateDefaultSubobject<UHealthBarComponent>(TEXT("Health Bar"));
+	HealthBarWidget->SetupAttachment(GetRootComponent());
 }
 
 void AEnemy::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	if (HealthBarWidget && Attributes)
+	{
+		HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent());
+	}
 }
 
 void AEnemy::PlayHitReactMontage()
@@ -85,5 +95,19 @@ void AEnemy::ReceiveHit_Implementation(const FVector& ImpactPoint)
 	{
 		UGameplayStatics::SpawnEmitterAtLocation(this, HitParticles, ImpactPoint);
 	}
+}
+
+float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	if (Attributes)
+	{
+		Attributes->ReceiveDamage(DamageAmount);
+		if (HealthBarWidget)
+		{
+			HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent());
+		}
+	}
+
+    return DamageAmount;
 }
 
