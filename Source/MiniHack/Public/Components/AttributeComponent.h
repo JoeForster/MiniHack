@@ -17,6 +17,7 @@ public:
 
 	FORCEINLINE void ReceiveDamage(float Damage) { Health = FMath::Clamp(Health - Damage, 0.f, MaxHealth); }
 	FORCEINLINE float GetHealthPercent() { return Health/MaxHealth; }
+	bool IsAlive() { return (Health > 0.0f); }
 
 protected:
 	virtual void BeginPlay() override;

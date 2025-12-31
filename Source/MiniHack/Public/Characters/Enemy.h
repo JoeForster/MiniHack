@@ -32,6 +32,7 @@ protected:
 	
 	// Montage play functions
 	void PlayHitReactMontage();
+	void PlayDeathMontage();
 
 private:
 
@@ -43,6 +44,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, Category = Montages)
 	UAnimMontage* HitReactMontage;
+
+	UPROPERTY(EditDefaultsOnly, Category = Montages)
+	UAnimMontage* DeathMontage;
 
 	UPROPERTY(EditAnywhere, Category = Sounds)
 	USoundBase* HitSound;

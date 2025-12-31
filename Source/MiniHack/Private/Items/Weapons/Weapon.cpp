@@ -106,6 +106,15 @@ void AWeapon::OnHurtBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 
 	if (AActor* HitActor = HitResult.GetActor())
 	{
+		AController* InstigatorController = GetInstigator() ? GetInstigator()->GetController() : nullptr;
+
+		UGameplayStatics::ApplyDamage(
+			HitActor,
+			Damage,
+			InstigatorController,
+			this,
+			UDamageType::StaticClass());
+
 		if (IHitReceiver* HitReceiver = Cast<IHitReceiver>(HitActor))
 		{
 			HitReceiver->Execute_ReceiveHit(HitActor, HitResult.ImpactPoint);
@@ -115,14 +124,5 @@ void AWeapon::OnHurtBoxBeginOverlap(UPrimitiveComponent* OverlappedComponent, AA
 		IgnoreActors.AddUnique(HitActor);
 		// Apply fields even if the hit entity didn't implement the interface
 		CreateFields(HitResult.ImpactPoint);
-	
-		AController* InstigatorController = GetInstigator() ? GetInstigator()->GetController() : nullptr;
-
-		UGameplayStatics::ApplyDamage(
-			HitActor,
-			Damage,
-			InstigatorController,
-			this,
-			UDamageType::StaticClass());
 	}
 }

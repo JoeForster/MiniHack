@@ -64,6 +64,34 @@ void AEnemy::PlayHitReactMontage()
 	}
 }
 
+void AEnemy::PlayDeathMontage()
+{
+	if (USkeletalMeshComponent* CharacterMesh = GetMesh())
+	{
+		UAnimInstance* AnimInstance = CharacterMesh->GetAnimInstance();
+		if (AnimInstance && DeathMontage)
+		{
+			AnimInstance->Montage_Play(DeathMontage);
+			const int32 Selection = FMath::RandRange(0, 2);
+			FName SectionName = FName();
+			switch (Selection)
+			{
+			case 0:
+				SectionName = FName("Death1");
+				break;
+			case 1:
+				SectionName = FName("Death2");
+				break;
+			case 2:
+				SectionName = FName("Death3");
+				break;
+			}
+			AnimInstance->Montage_JumpToSection(SectionName, DeathMontage);
+		}
+	}
+}
+
+
 void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -84,7 +112,16 @@ void AEnemy::ReceiveHit_Implementation(const FVector& ImpactPoint)
 	//{
 	//	DrawDebugSphere(GetWorld(), ImpactPoint, 5.f, 10, FColor::Emerald, true);
 	//}
-	PlayHitReactMontage();
+	if (Attributes && Attributes->IsAlive())
+	{
+		PlayHitReactMontage();
+	}
+	else
+	{
+		PlayDeathMontage();
+	}
+
+	// TODO play death anim if not alive
 
 	if (HitSound)
 	{
