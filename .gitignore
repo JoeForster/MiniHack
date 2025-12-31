@@ -73,3 +73,9 @@ Plugins/**/Intermediate/*
 
 # Cache files for the editor to use
 DerivedDataCache/*
+
+# Linux VSCode and related generated files
+.ignore
+.vscode
+MiniHack.code-workspace
+Makefile
