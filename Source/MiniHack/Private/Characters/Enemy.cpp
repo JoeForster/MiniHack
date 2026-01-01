@@ -64,7 +64,7 @@ void AEnemy::PlayHitReactMontage()
 	}
 }
 
-void AEnemy::PlayDeathMontage()
+void AEnemy::Die()
 {
 	if (USkeletalMeshComponent* CharacterMesh = GetMesh())
 	{
@@ -78,14 +78,18 @@ void AEnemy::PlayDeathMontage()
 			{
 			case 0:
 				SectionName = FName("Death1");
+				DeathPose = EDeathPose::EDP_Death1;
 				break;
 			case 1:
 				SectionName = FName("Death2");
+				DeathPose = EDeathPose::EDP_Death2;
 				break;
 			case 2:
 				SectionName = FName("Death3");
+				DeathPose = EDeathPose::EDP_Death3;
 				break;
 			}
+			
 			AnimInstance->Montage_JumpToSection(SectionName, DeathMontage);
 		}
 	}
@@ -118,7 +122,7 @@ void AEnemy::ReceiveHit_Implementation(const FVector& ImpactPoint)
 	}
 	else
 	{
-		PlayDeathMontage();
+		Die();
 	}
 
 	// TODO play death anim if not alive

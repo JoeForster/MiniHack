@@ -3,8 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+
+#include "Characters/CharacterTypes.h"
 #include "GameFramework/Character.h"
 #include "Interfaces/HitReceiver.h"
+
 #include "Enemy.generated.h"
 
 class UAttributeComponent;
@@ -29,10 +32,12 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	
-	// Montage play functions
+
 	void PlayHitReactMontage();
-	void PlayDeathMontage();
+	void Die();
+
+	UPROPERTY(BlueprintReadOnly)
+	EDeathPose DeathPose = EDeathPose::EDP_Alive;
 
 private:
 
