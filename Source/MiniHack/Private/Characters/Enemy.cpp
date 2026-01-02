@@ -37,6 +37,7 @@ void AEnemy::BeginPlay()
 	if (HealthBarWidget && Attributes)
 	{
 		HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent());
+		HealthBarWidget->SetVisibility(false);
 	}
 }
 
@@ -93,12 +94,37 @@ void AEnemy::Die()
 			AnimInstance->Montage_JumpToSection(SectionName, DeathMontage);
 		}
 	}
+
+	if (UCapsuleComponent* Capsule = GetCapsuleComponent())
+	{
+		Capsule->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	}
+
+	SetLifeSpan(3.0);
+
+	if (HealthBarWidget)
+	{
+		HealthBarWidget->SetVisibility(false);
+	}
 }
 
 
 void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (CombatTarget)
+	{
+		const double DistanceToTarget = (CombatTarget->GetActorLocation() - GetActorLocation()).Size();
+		if (DistanceToTarget > CombatRadius)
+		{
+			CombatTarget = nullptr;
+			if (HealthBarWidget)
+			{
+				HealthBarWidget->SetVisibility(false);
+			}
+		}
+	}
 
 }
 
@@ -116,6 +142,12 @@ void AEnemy::ReceiveHit_Implementation(const FVector& ImpactPoint)
 	//{
 	//	DrawDebugSphere(GetWorld(), ImpactPoint, 5.f, 10, FColor::Emerald, true);
 	//}
+
+	if (HealthBarWidget)
+	{
+		HealthBarWidget->SetVisibility(true);
+	}
+
 	if (Attributes && Attributes->IsAlive())
 	{
 		PlayHitReactMontage();
@@ -148,6 +180,8 @@ float AEnemy::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AC
 			HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent());
 		}
 	}
+
+	CombatTarget = EventInstigator ? EventInstigator->GetPawn() : nullptr;
 
     return DamageAmount;
 }
