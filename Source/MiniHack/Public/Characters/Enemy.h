@@ -14,8 +14,9 @@ class UAttributeComponent;
 class UHealthBarComponent;
 class UAnimMontage;
 
+// TODO Add IAbilitySystemInterface (maybe want a common base class for this and rogue character)
 UCLASS()
-class MINIHACK_API AEnemy : public ACharacter, public IHitReceiver
+class MINIHACK_API AEnemy : public ACharacter, public IHitReceiver//, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 

@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "AbilitySystemInterface.h"
 #include "GameFramework/Character.h"
+#include "Components/HackAbilitySystemComponent.h"
 #include "Characters/CharacterTypes.h"
 #include "RogueCharacter.generated.h"
 
@@ -14,7 +16,7 @@ class AWeapon;
 class UAnimMontage;
 
 UCLASS()
-class MINIHACK_API ARogueCharacter : public ACharacter
+class MINIHACK_API ARogueCharacter : public ACharacter, public IAbilitySystemInterface
 {
 	GENERATED_BODY()
 
@@ -27,6 +29,8 @@ public:
 
 	FORCEINLINE void SetOverlappingItem(AItem* Item) { OverlappingItem = Item; }
 	FORCEINLINE ECharacterState GetCharacterState() const { return CharacterState; }
+
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override;
 
 
 	UFUNCTION(BlueprintCallable)
@@ -72,4 +76,8 @@ private:
 
 	UPROPERTY(VisibleAnywhere, Category = Weapon)
 	AWeapon* CarriedWeapon;
+
+	// TODO we should probably use TObjectPtr for all the above and others too.
+	UPROPERTY(VisibleAnywhere, Category = Abilities)
+	TObjectPtr<UHackAbilitySystemComponent> AbilitySystem;
 };
