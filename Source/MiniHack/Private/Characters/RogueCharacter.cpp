@@ -26,6 +26,7 @@ ARogueCharacter::ARogueCharacter()
 	ViewCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("ViewCamera"));
 	ViewCamera->SetupAttachment(CameraBoom);
 
+	AbilitySystem = CreateDefaultSubobject<UHackAbilitySystemComponent>(TEXT("AbilitySystem"));
 }
 
 void ARogueCharacter::SetWeaponCollisionEnabled(ECollisionEnabled::Type EnabledType)
@@ -44,7 +45,9 @@ void ARogueCharacter::SetWeaponCollisionEnabled(ECollisionEnabled::Type EnabledT
 void ARogueCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	// Provide this character as owner and avatar
+    AbilitySystem->InitAbilityActorInfo(this, this);
 }
 
 void ARogueCharacter::MoveForward(float Value)
@@ -186,4 +189,9 @@ void ARogueCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 	PlayerInputComponent->BindAction(FName("Jump"), IE_Pressed, this, &ACharacter::Jump);
 	PlayerInputComponent->BindAction(FName("Use"), IE_Pressed, this, &ARogueCharacter::UsePressed);
 	PlayerInputComponent->BindAction(FName("Attack"), IE_Pressed, this, &ARogueCharacter::AttackPressed);
+}
+
+UAbilitySystemComponent* ARogueCharacter::GetAbilitySystemComponent() const
+{
+	return AbilitySystem;
 }
