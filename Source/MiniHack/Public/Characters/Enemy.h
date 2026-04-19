@@ -36,6 +36,7 @@ protected:
 
 	void PlayHitReactMontage();
 	void Die();
+	bool IsInRangeOfTarget(AActor* Target, double Radius);
 
 	UPROPERTY(BlueprintReadOnly)
 	EDeathPose DeathPose = EDeathPose::EDP_Alive;
@@ -65,4 +66,19 @@ private:
 
 	UPROPERTY(EditAnywhere, Category = AI)
 	double CombatRadius = 500.f;
+
+	UPROPERTY(EditAnywhere, Category = AI)
+	double PatrolArrivalRadius = 200.f;
+
+	/**
+	 * Navigation
+	 */
+
+	class AAIController* EnemyController;
+
+	UPROPERTY(EditInstanceOnly, Category = "AI Navigation")
+	AActor* PatrolTarget;
+
+	UPROPERTY(EditInstanceOnly, Category = "AI Navigation")
+	TArray<AActor*> PatrolPath;
 };

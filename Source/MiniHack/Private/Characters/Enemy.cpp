@@ -8,6 +8,9 @@
 #include "HUD/HealthBarComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "MiniHack/DebugMacros.h"
+#include "AIController.h"
+#include "NavigationPath.h"
+#include "Navigation/PathFollowingComponent.h"
 
 AEnemy::AEnemy()
 {
@@ -48,6 +51,8 @@ void AEnemy::BeginPlay()
 		HealthBarWidget->SetHealthPercent(Attributes->GetHealthPercent());
 		HealthBarWidget->SetVisibility(false);
 	}
+
+	EnemyController = Cast<AAIController>(GetController());
 }
 
 void AEnemy::PlayHitReactMontage()
@@ -117,20 +122,81 @@ void AEnemy::Die()
 	}
 }
 
+bool AEnemy::IsInRangeOfTarget(AActor* Target, double Radius)
+{
+	if (Target != nullptr)
+	{
+		const double DistanceToTarget = (Target->GetActorLocation() - GetActorLocation()).Size();
+		if (GEngine)
+		{
+			const FString OnScreenString = FString::Printf(TEXT("IsInRangeOfTarget Distance %f = %f?"), DistanceToTarget, Radius);
+			GEngine->AddOnScreenDebugMessage(1, 30.f, FColor::Green, OnScreenString);
+		}
+		return (DistanceToTarget <= Radius);
+	}
+	return false;
+}
 
 void AEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (CombatTarget)
+	const bool InCombatRange = IsInRangeOfTarget(CombatTarget, CombatRadius);
+	if (!InCombatRange)
 	{
-		const double DistanceToTarget = (CombatTarget->GetActorLocation() - GetActorLocation()).Size();
-		if (DistanceToTarget > CombatRadius)
+		CombatTarget = nullptr;
+		if (HealthBarWidget)
 		{
-			CombatTarget = nullptr;
-			if (HealthBarWidget)
+			HealthBarWidget->SetVisibility(false);
+		}
+	}
+	const AActor* PrevPatrolTarget = nullptr;
+	const bool ArrivedAtPatrolPoint = IsInRangeOfTarget(PatrolTarget, PatrolArrivalRadius);
+	if (ArrivedAtPatrolPoint)
+	{
+		PrevPatrolTarget = PatrolTarget;
+		PatrolTarget = nullptr;
+
+	}
+	if (EnemyController != nullptr && PatrolTarget == nullptr)
+	{
+		TArray<AActor*> ValidTargets;
+		for (AActor* CheckTarget : PatrolPath)
+		{
+			if (CheckTarget != PatrolTarget && CheckTarget != nullptr)
 			{
-				HealthBarWidget->SetVisibility(false);
+				ValidTargets.AddUnique(CheckTarget);
+			}
+		}
+
+		int32 NumValidTargets = ValidTargets.Num();
+		if (NumValidTargets > 0)
+		{
+			const int32 Selection = FMath::RandRange(0, NumValidTargets - 1);
+			PatrolTarget = PatrolPath[Selection];
+
+			if (PatrolTarget != nullptr && PatrolTarget != EnemyController)
+			{
+				if (GEngine)
+				{
+					const FString OnScreenString = FString::Printf(TEXT("PATROL POINT %i"), Selection);
+					GEngine->AddOnScreenDebugMessage(1, 30.f, FColor::Green, OnScreenString);
+				}
+
+				FAIMoveRequest MoveRequest;
+				MoveRequest.SetGoalActor(PatrolTarget);
+				MoveRequest.SetAcceptanceRadius(15.f);
+				FNavPathSharedPtr NavPath;
+				FPathFollowingRequestResult result = EnemyController->MoveTo(MoveRequest, &NavPath);
+				if (NavPath)
+				{
+					TArray<FNavPathPoint>& PathPoints = NavPath->GetPathPoints();
+					for (auto Point : PathPoints)
+					{
+						const FVector& Location = Point.Location;
+						DrawDebugSphere(GetWorld(), Location, 12.f, 12, FColor::Green, false, 10.f);	
+					}
+				}
 			}
 		}
 	}
